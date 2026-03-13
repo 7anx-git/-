@@ -1,0 +1,44 @@
+graph TD
+    subgraph Power_System ["电源管理系统"]
+        DC_IN["DC Jack 12V"] --> BUCK1["NB680: 0.8V Core"]
+        DC_IN --> BUCK2["MP2145: 3.3V/1.8V/1.2V"]
+        DC_IN --> LDOs["LDOs: 2.5V/1.1V/0.9V"]
+        BUCK1 --> SoC
+        BUCK2 --> SoC
+        BUCK2 --> Peripherals["外设供电"]
+        LDOs --> SoC
+    end
+
+    subgraph Core_Processing ["核心处理单元"]
+        SoC["Hi3559AV100 SoC"]
+        DDR1["DDR4/LPDDR4 Group A"] <==> SoC
+        DDR2["DDR4/LPDDR4 Group B"] <==> SoC
+        Crystal["24MHz / 32.768kHz"] --- SoC
+    end
+
+    subgraph Video_Audio ["影音输入输出"]
+        HDMI_Out["HDMI Type-A"] --- SoC
+        FPC_MIPI1["MIPI CSI Camera 1"] --> SoC
+        FPC_MIPI2["MIPI CSI Camera 2"] --> SoC
+        HighSpeed_Conn["60-pin Board-to-Board"] <==> SoC
+        Audio_Codec["AK5350 Audio ADC"] --- SoC
+        Audio_Codec --- Jacks["Audio Jack x3"]
+    end
+
+    subgraph Storage_Comm ["存储与通讯"]
+        TF_Card["Micro SD Slot"] <==> SoC
+        RS232_IC["MAX3232E"] --- DB9["RS232 Port"]
+        RS232_IC --- SoC
+        USB_3_0["USB 3.0 Interface"] --- SoC
+    end
+
+    subgraph User_Interface ["用户交互与调试"]
+        Buttons["Function Keys x5"] --- SoC
+        LEDs["Status LEDs"] --- SoC
+        Debug_Header["JTAG/UART Header"] --- SoC
+    end
+
+    style SoC fill:#f96,stroke:#333,stroke-width:2px
+    style Power_System fill:#e1f5fe,stroke:#01579b
+    style Video_Audio fill:#fff3e0,stroke:#e65100
+    style Core_Processing fill:#f3e5f5,stroke:#4a148c
